@@ -24,6 +24,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService inMemoryUserDetailsManager(){
+    	// All the Users Details
         return new InMemoryUserDetailsManager(
                 User.withUsername("student").password(passwordEncoder().encode("student")).roles("STUDENT").build(),
                 User.withUsername("teacher").password(passwordEncoder().encode("teacher")).roles("TEACHER").build(),
@@ -33,7 +34,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.httpBasic(Customizer.withDefaults())
+        
+    	// Defining the Security of the Routes
+    	return httpSecurity.httpBasic(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/").permitAll()

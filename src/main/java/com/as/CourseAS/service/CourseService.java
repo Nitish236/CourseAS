@@ -19,27 +19,27 @@ public class CourseService {
     public CourseService(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
     }
-
+    
+    // Gets all the Courses
     public List<CourseDto> getAllCourses() {
     	List<CourseDto> courses = courseRepository.findAllCourseDtos();
-    	
+ 
     	if(courses.isEmpty()) {
     		throw new CourseNotFoundException("No courses found");
     	}
-    	
     	return courses;
     }
-
+    
+    // To get the Course Details without the TimeStamps
     public Optional<CourseDto> getCourseById(Long id) {
     	Optional<CourseDto> course = courseRepository.findCourseDtoById(id);
         if (course.isEmpty()) {
             throw new CourseNotFoundException("Course with id " + id + " not found");
         }
-        
         return course;
     }
 
-
+    // To Create the Course
     public Course createCourse(Course course) {
     	
     	course.setCreatedAt(LocalDateTime.now());
@@ -47,7 +47,8 @@ public class CourseService {
     	
         return courseRepository.save(course);
     }
-
+    
+    // To Update the Course
     public Course updateCourse(Long id, Course updatedCourse) {
     	Optional<Course> course = courseRepository.findById(id);
     	if (course.isEmpty()) {
@@ -56,6 +57,7 @@ public class CourseService {
     	
     	Course exisCourse = course.get();
     	
+    	// Update only the details that have changed
     	if (updatedCourse.getName() != null) {
             exisCourse.setName(updatedCourse.getName());
         }
@@ -82,10 +84,10 @@ public class CourseService {
     	
         return courseRepository.save(exisCourse);
     }
-
+    
+    // Delete the Course
     public void deleteCourse(Long id) {
         if (!courseRepository.existsById(id)) {
-            // Handle exception if course with given id does not exist
             throw new CourseNotFoundException("Course with id " + id + " not found");
         }
         courseRepository.deleteById(id);

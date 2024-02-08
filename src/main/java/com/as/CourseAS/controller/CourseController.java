@@ -32,13 +32,15 @@ public class CourseController {
         this.courseCreatorService = courseCreatorService;
         this.teacherService = teacherService;
     }
-
+    
+    // Route to Get All the Courses 
     @GetMapping("/getAll")
     public ResponseEntity<List<CourseDto>> getAllCourses() {
         List<CourseDto> courses = courseService.getAllCourses();
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
-
+    
+    // Route to Get the Course Details 
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getCourseById(@PathVariable Long id) {
     	// Get the authentication object
@@ -50,6 +52,7 @@ public class CourseController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
         
+        // Send Details based on the role
         if(roles.contains("ROLE_COURSE_CREATOR")) {
         	Course course = courseCreatorService.getCourseById(id)
                     .orElseThrow(() -> new CourseNotFoundException("Course with id " + id + " not found"));
@@ -61,26 +64,29 @@ public class CourseController {
             return new ResponseEntity<>(course, HttpStatus.OK);
         }
     }
-
+    
+    // Route to Create new Course 
     @PostMapping("/create")
     public ResponseEntity<Course> createCourse(@RequestBody Course course) {
         Course createdCourse = courseService.createCourse(course);
         return new ResponseEntity<>(createdCourse, HttpStatus.CREATED);
     }
-
+    
+    // Route to Update the Course Details
     @PutMapping("/update/{id}")
     public ResponseEntity<Course> updateCourse(@PathVariable Long id, @RequestBody Course updatedCourse) {
         Course course = courseService.updateCourse(id, updatedCourse);
         return new ResponseEntity<>(course, HttpStatus.OK);
     }
-
+    
+    // Route to Delete the Course 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return new ResponseEntity<>("Course with ID " + id + " deleted successfully", HttpStatus.OK);
     }
 
-    // Exception handling
+    // Exception handling (Handling the exceptions)
     @ExceptionHandler({CourseNotFoundException.class, InvalidCourseRequestException.class})
     public ResponseEntity<String> handleNotFoundException(Exception e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
